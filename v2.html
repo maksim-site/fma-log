@@ -24,7 +24,7 @@
     --acc-soft:#f7ead9;
   }
   *{margin:0;padding:0;box-sizing:border-box}
-  html{scroll-behavior:smooth}
+  html{scroll-behavior:smooth;overflow-x:hidden}
   body{background:var(--paper);color:var(--ink);font-family:'Inter',system-ui,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
   h1,h2,h3,h4{font-family:'Manrope',sans-serif;font-weight:800;line-height:1.04;letter-spacing:-.02em}
   a{color:inherit;text-decoration:none}
@@ -42,11 +42,15 @@
 
   /* HEADER */
   header{position:sticky;top:0;z-index:50;background:rgba(244,243,238,.86);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  body.menu-open{overflow:hidden}
   .nav{display:flex;align-items:center;justify-content:space-between;height:88px}
   .logo{display:flex;align-items:center;gap:12px;font-family:'Manrope';font-weight:800;font-size:20px}
   .logo img{height:56px;width:auto;display:block}
-  nav ul{display:flex;gap:32px;list-style:none;font-size:15px;font-weight:500;color:var(--ink-2)}
-  nav ul a:hover{color:var(--acc-d)}
+  .site-nav ul{display:flex;gap:32px;list-style:none;font-size:15px;font-weight:500;color:var(--ink-2)}
+  .site-nav ul a:hover{color:var(--acc-d)}
+  .mobile-menu-extra{display:none}
+  .nav-toggle{display:none}
+  .menu-backdrop{display:none}
   .nav-right{display:flex;align-items:center;gap:24px}
   .nav-phone{font-family:'Manrope';font-weight:700;font-size:16px}
   .btn{display:inline-flex;align-items:center;gap:9px;padding:13px 24px;font-size:14.5px;font-weight:600;font-family:'Manrope';cursor:pointer;border:none;transition:.2s;border-radius:3px}
@@ -171,8 +175,72 @@
   .reveal.in{opacity:1;transform:none}
 
   @media(max-width:980px){
+    header{background:var(--paper);backdrop-filter:none}
     .topbar .cities{display:none}
-    nav ul,.nav-phone{display:none}
+    .topbar .wrap{height:auto;min-height:38px;padding-top:9px;padding-bottom:9px;text-align:center;justify-content:center}
+    .nav{height:74px}
+    .logo img{height:46px}
+    .site-nav{
+      position:fixed;
+      top:0;
+      right:0;
+      z-index:80;
+      width:min(86vw,360px);
+      height:100dvh;
+      background:var(--card);
+      border-left:1px solid var(--line-2);
+      box-shadow:-24px 0 60px rgba(14,47,74,.18);
+      padding:92px 26px 28px;
+      clip-path:inset(0 0 0 100%);
+      opacity:0;
+      visibility:hidden;
+      pointer-events:none;
+      transition:clip-path .28s ease,opacity .2s ease,visibility .2s ease;
+      display:flex;
+      flex-direction:column;
+      gap:24px;
+    }
+    body.menu-open .site-nav{clip-path:inset(0);opacity:1;visibility:visible;pointer-events:auto}
+    .site-nav ul{display:flex;flex-direction:column;gap:0;font-size:20px;font-family:'Manrope';font-weight:800;color:var(--ink)}
+    .site-nav li{border-bottom:1px solid var(--line)}
+    .site-nav li:first-child{border-top:1px solid var(--line)}
+    .site-nav ul a{display:flex;align-items:center;min-height:58px}
+    .mobile-menu-extra{display:flex;flex-direction:column;gap:14px;margin-top:auto}
+    .mobile-menu-extra .btn{justify-content:center;width:100%}
+    .mobile-menu-phone{font-family:'Manrope';font-weight:800;color:var(--navy);font-size:18px;text-align:center}
+    .nav-phone{display:none}
+    .nav-right{gap:10px}
+    .nav-right .btn{display:none}
+    .nav-toggle{
+      position:relative;
+      z-index:90;
+      width:44px;
+      height:44px;
+      display:inline-flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:5px;
+      background:var(--card);
+      border:1px solid var(--line-2);
+      border-radius:5px;
+      cursor:pointer;
+    }
+    .nav-toggle span{width:20px;height:2px;background:var(--navy);border-radius:999px;transition:transform .2s ease,opacity .2s ease}
+    body.menu-open .nav-toggle span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+    body.menu-open .nav-toggle span:nth-child(2){opacity:0}
+    body.menu-open .nav-toggle span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+    .menu-backdrop{
+      position:fixed;
+      inset:0;
+      z-index:70;
+      display:block;
+      background:rgba(14,47,74,.28);
+      opacity:0;
+      pointer-events:none;
+      transition:opacity .25s ease;
+    }
+    body.menu-open .menu-backdrop{opacity:1;pointer-events:auto}
     .hero-grid{grid-template-columns:1fr;gap:40px}
     .matrix,.proc,.sols,.band{grid-template-columns:repeat(2,1fr)}
     .quote{grid-template-columns:1fr}
@@ -181,10 +249,34 @@
   }
   @media(max-width:560px){
     .wrap{padding:0 18px}
+    .topbar{font-size:11px}
+    .nav{height:68px}
+    .logo img{height:40px}
+    .hero{padding:48px 0 54px}
+    .hero h1{font-size:34px}
+    .hero .sub{font-size:16px;margin-top:18px}
+    .hero-cta{margin-top:26px}
+    .hero-cta .btn{width:100%;justify-content:center}
+    .route{padding:22px 18px}
     .matrix,.proc,.sols,.qf,.band{grid-template-columns:1fr}
+    .sec{padding:62px 0}
+    .sec-head{margin-bottom:32px}
+    .sec-head h2{font-size:30px}
+    .cell{min-height:auto;padding:24px 22px}
+    .band{padding:32px 24px}
+    .band .st b{font-size:38px}
     .trust{flex-wrap:wrap;gap:18px}
     .trust div{border:none;padding:0;margin:0}
+    .ship-top{padding:16px 18px}
     .quote-l,.quote-r{padding:32px 24px}
+    .quote-l h2{font-size:30px}
+    .foot{grid-template-columns:1fr}
+    .foot-bot{flex-direction:column;gap:10px}
+  }
+  @media(max-width:400px){
+    .route-meta{grid-template-columns:1fr}
+    .route-modes{display:grid;grid-template-columns:1fr 1fr}
+    .hero h1{font-size:31px}
   }
 </style>
 </head>
@@ -202,17 +294,26 @@
 <header>
   <div class="wrap nav">
     <a href="#" class="logo"><img src="logo.png" alt="ФМА Логистика"></a>
-    <nav><ul>
+    <nav class="site-nav" id="siteMenu" aria-label="Основная навигация"><ul>
       <li><a href="#services">Услуги</a></li>
       <li><a href="#process">Как работаем</a></li>
       <li><a href="#solutions">Решения</a></li>
       <li><a href="#quote">Контакты</a></li>
-    </ul></nav>
+    </ul>
+      <div class="mobile-menu-extra">
+        <a href="tel:+74957805818" class="mobile-menu-phone">+7 (495) 780-58-18</a>
+        <a href="#quote" class="btn btn-primary">Запрос ставки</a>
+      </div>
+    </nav>
     <div class="nav-right">
       <a href="tel:+74957805818" class="nav-phone">+7 (495) 780-58-18</a>
       <a href="#quote" class="btn btn-primary">Запрос ставки</a>
+      <button class="nav-toggle" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="siteMenu">
+        <span></span><span></span><span></span>
+      </button>
     </div>
   </div>
+  <div class="menu-backdrop" data-menu-close></div>
 </header>
 
 <!-- HERO -->
@@ -369,6 +470,20 @@
 <script>
   const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}})},{threshold:.12,rootMargin:'0px 0px -8% 0px'});
   document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+  const menuButton=document.querySelector('.nav-toggle');
+  const menuLinks=document.querySelectorAll('#siteMenu a');
+  const menuBackdrop=document.querySelector('[data-menu-close]');
+  const setMenu=(open)=>{
+    document.body.classList.toggle('menu-open',open);
+    menuButton.setAttribute('aria-expanded',String(open));
+    menuButton.setAttribute('aria-label',open?'Закрыть меню':'Открыть меню');
+  };
+  menuButton.addEventListener('click',()=>setMenu(!document.body.classList.contains('menu-open')));
+  menuLinks.forEach(link=>link.addEventListener('click',()=>setMenu(false)));
+  menuBackdrop.addEventListener('click',()=>setMenu(false));
+  addEventListener('keydown',(e)=>{if(e.key==='Escape')setMenu(false)});
+  addEventListener('resize',()=>{if(innerWidth>980)setMenu(false)});
 </script>
 </body>
 </html>
